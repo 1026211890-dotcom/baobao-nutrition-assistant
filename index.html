@@ -360,12 +360,12 @@ tr:nth-child(even){background:var(--bg)}
     <div class="info-box">在下方表格输入食物名称和重量，自动计算热量和蛋白质。点击选择框可从常见食物中快速选择，也可手动输入。</div>
     <table class="food-table">
       <thead>
-        <tr><th style="width:5%">#</th><th style="width:25%">食物名称</th><th style="width:12%">重量(g)</th><th style="width:14%">热量/100g</th><th style="width:14%">蛋白/100g</th><th style="width:14%">摄入热量</th><th style="width:14%">摄入蛋白</th><th style="width:2%"></th></tr>
+        <tr><th style="width:6%">#</th><th style="width:38%">食物名称</th><th style="width:18%">重量(g)</th><th style="width:18%">摄入热量(kcal)</th><th style="width:15%">摄入蛋白(g)</th><th style="width:5%"></th></tr>
       </thead>
       <tbody id="food-input-body"></tbody>
       <tbody>
         <tr style="background:var(--primary);color:#fff;font-weight:700">
-          <td colspan="5" style="text-align:right;padding:10px">经口进食合计 →</td>
+          <td colspan="3" style="text-align:right;padding:10px">经口进食合计 →</td>
           <td class="calc-cell" id="f-total-kcal" style="font-size:15px;color:var(--accent)">0</td>
           <td class="calc-cell" id="f-total-prot" style="font-size:15px;color:var(--accent)">0</td>
           <td></td>
