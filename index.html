@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<title>宝宝营养助手 · 小百肽能专用</title>
+<style>
+:root{
+  --primary:#1B7F8F;--primary-light:#2EAF9E;--accent:#0B5345;--warn:#E74C3C;
+  --bg:#F4F7F6;--card:#FFFFFF;--border:#DCE3E1;--input-bg:#FFF9F0;--result-bg:#E8F8F5;
+  --text:#2C3E50;--text-light:#7F8C8D;--shadow:0 2px 10px rgba(0,0,0,.06);
+  --soft-orange:#F39C12;--soft-pink:#FCE4EC;--soft-blue:#E3F2FD;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.container{max-width:960px;margin:0 auto;padding:16px}
+
+/* Header */
+.header{background:linear-gradient(135deg,#2E86C1,#48C9B0);color:#fff;padding:20px;border-radius:12px;margin-bottom:16px;box-shadow:var(--shadow);position:relative}
+.header-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;padding-right:110px}
+.logo-icon{width:48px;height:48px;background:rgba(255,255,255,.95);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.logo-icon svg{width:32px;height:32px}
+.header-logo{position:absolute;top:16px;right:16px;width:90px;height:auto;z-index:10}
+.header-logo img{width:100%;height:auto;display:block;background:#fff;border-radius:6px;padding:3px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.header-text{flex:1}
+.header h1{font-size:20px;margin-bottom:4px}
+.header .subtitle{font-size:13px;opacity:.9;padding-right:100px}
+.header .badge{display:inline-block;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:20px;font-size:11px;margin-left:6px}
+
+/* Cards */
+.card{background:var(--card);border-radius:12px;padding:20px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card-title{font-size:16px;font-weight:700;color:var(--primary);margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--bg);display:flex;align-items:center;gap:8px}
+.card-title .icon{width:28px;height:28px;background:var(--primary-light);color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.form-item{display:flex;flex-direction:column;gap:6px}
+.form-item label{font-size:14px;color:var(--text-light);font-weight:600}
+.form-item input,.form-item select{min-height:44px;padding:12px 14px;border:2px solid var(--border);border-radius:10px;font-size:16px;transition:border-color .2s;-webkit-appearance:none;appearance:none}
+.form-item input:focus,.form-item select:focus{outline:none;border-color:var(--primary-light)}
+.form-item input{background:var(--input-bg);font-weight:700;color:var(--accent)}
+.form-item .hint{font-size:12px;color:var(--text-light)}
+
+/* Results */
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:14px}
+.result-box{background:var(--result-bg);border-radius:10px;padding:14px;text-align:center;border:2px solid #ABEBC6}
+.result-box .label{font-size:11px;color:var(--text-light);margin-bottom:4px}
+.result-box .value{font-size:24px;font-weight:800;color:var(--accent)}
+.result-box .unit{font-size:12px;color:var(--text-light)}
+
+/* Table */
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th{background:var(--primary);color:#fff;padding:10px 8px;font-size:12px;text-align:center}
+td{padding:8px;border-bottom:1px solid var(--border);text-align:center;font-size:13px}
+tr:nth-child(even){background:var(--bg)}
+.highlight-row{background:#D4EFDF!important;font-weight:600}
+
+/* Food table */
+.food-table input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-size:13px}
+.food-table input.food-name{background:var(--input-bg)}
+.food-table input.food-gram{background:var(--input-bg);text-align:center}
+.food-table .calc-cell{background:var(--result-bg);font-weight:600}
+
+/* AI Section */
+.ai-section{background:linear-gradient(135deg,#2C3E50,#1A5276);color:#fff;border-radius:12px;padding:20px;margin-bottom:16px}
+.ai-section h3{font-size:16px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ai-content{background:rgba(255,255,255,.1);border-radius:8px;padding:14px;font-size:14px;min-height:60px;white-space:pre-wrap}
+.ai-content.loading{opacity:.6}
+.ai-badge{background:#E67E22;padding:2px 10px;border-radius:20px;font-size:11px}
+
+/* Warning */
+.warning{background:#FDEDEC;border-left:4px solid var(--warn);padding:12px 16px;border-radius:8px;margin:10px 0;font-size:13px}
+.warning strong{color:var(--warn)}
+.info-box{background:#EBF5FB;border-left:4px solid var(--primary-light);padding:12px 16px;border-radius:8px;margin:10px 0;font-size:13px}
+
+/* Buttons */
+.btn{min-height:44px;padding:12px 24px;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:transform .1s;-webkit-tap-highlight-color:transparent}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-light)}
+.btn-accent{background:var(--accent);color:#fff}
+.btn-accent:hover{opacity:.9}
+.btn:active{transform:scale(.97)}
+.btn-group{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab{min-height:44px;padding:12px 18px;background:var(--card);border:2px solid var(--border);border-radius:10px 10px 0 0;cursor:pointer;font-size:15px;font-weight:600;color:var(--text-light);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* Progress */
+.progress-bar{width:100%;height:8px;background:var(--border);border-radius:4px;margin:6px 0;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width .3s}
+
+/* Footer */
+.footer{text-align:center;padding:24px 16px;font-size:13px;color:var(--text-light);background:var(--card);border-radius:12px;margin-top:10px}
+.footer a{color:var(--primary-light)}
+.author-section{display:flex;flex-wrap:wrap;gap:20px;justify-content:center;align-items:flex-start;margin-bottom:20px}
+.author-card{display:flex;flex-direction:column;align-items:center;gap:8px;max-width:140px}
+.author-card img{width:120px;height:120px;border-radius:10px;object-fit:contain;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08);border:1px solid var(--border)}
+.author-card .label{font-size:12px;color:var(--text-light);line-height:1.4}
+.author-name{font-size:16px;font-weight:700;color:var(--primary);margin-bottom:2px}
+.author-title{font-size:12px;color:var(--text-light)}
+.qr-divider{width:1px;min-height:120px;background:var(--border);margin:0 10px}
+
+/* WeChat optimizations */
+.wechat-tip{background:#E8F8F5;border:1px solid #ABEBC6;border-radius:8px;padding:10px 14px;font-size:13px;color:var(--accent);margin-bottom:14px;display:none}
+.wechat-tip.show{display:block}
+
+
+/* Responsive */
+@media(max-width:600px){
+  .container{padding:12px}
+  .header{padding:16px}
+  .header h1{font-size:18px}
+  .header-logo{width:72px;top:12px;right:12px}
+  .header-logo img{padding:2px}
+  .header h1{font-size:18px}
+  .header .subtitle{font-size:12px;padding-right:80px}
+  .header-top{padding-right:80px}
+  .logo-icon{width:42px;height:42px}
+  .logo-icon svg{width:28px;height:28px}
+  .form-grid{grid-template-columns:1fr}
+  .result-grid{grid-template-columns:repeat(2,1fr)}
+  .result-box .value{font-size:20px}
+  .tab{font-size:14px;padding:10px 14px}
+  .author-section{flex-direction:column;align-items:center}
+  .qr-divider{display:none}
+  .author-card{max-width:160px}
+  .author-card img{width:140px;height:140px}
+  .card{padding:16px}
+  .food-table{display:block;overflow-x:auto;white-space:nowrap}
+  .food-table table{min-width:600px}
+  th,td{font-size:14px;padding:10px 6px}
+}
+/* Print */
+@media print{
+  .tabs,.btn-group,.footer button{display:none!important}
+  .tab-content{display:block!important}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ccc}
+  .header{background:var(--primary)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo-icon">
+      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" fill="#E8F8F5"/>
+        <path d="M18 26C18 22 22 18 32 18C42 18 46 22 46 26C46 30 42 34 32 34C22 34 18 30 18 26Z" fill="#2EAF9E"/>
+        <path d="M32 34V46" stroke="#1B7F8F" stroke-width="4" stroke-linecap="round"/>
+        <path d="M24 42C24 42 28 46 32 46C36 46 40 42 40 42" stroke="#1B7F8F" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="24" cy="25" r="2" fill="#fff"/>
+        <circle cx="40" cy="25" r="2" fill="#fff"/>
+        <path d="M14 16C16 12 20 10 24 12" stroke="#F39C12" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>宝宝营养助手 <span class="badge">小百肽能专用</span></h1>
+      <div class="subtitle">帮白血病患儿家庭算清楚每天该吃多少、怎么补 · 1-18岁适用</div>
+    </div>
+  </div>
+  <div class="header-logo" title="陕西省营养学会">
+    <img src="assets/society-logo.png" alt="陕西省营养学会">
+  </div>
+</div>
+
+<div class="wechat-tip" id="wechat-tip">💡 微信用户提示：点击右上角「···」可收藏本页，方便下次快速找到。</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('main',event)">主计算器</div>
+  <div class="tab" onclick="switchTab('food',event)">食物替换计算</div>
+  <div class="tab" onclick="switchTab('feeding',event)">喂养方案</div>
+  <div class="tab" onclick="switchTab('reference',event)">产品说明</div>
+</div>
+
+<!-- ===== Tab 1: 主计算器 ===== -->
+<div class="tab-content active" id="tab-main">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">1</span>患儿基本信息</div>
+    <div class="form-grid">
+      <div class="form-item">
+        <label>性别</label>
+        <select id="gender" onchange="calculate()">
+          <option value="male">男童</option>
+          <option value="female">女童</option>
+        </select>
+      </div>
+      <div class="form-item">
+        <label>年龄（岁）</label>
+        <input type="number" id="age" value="5" min="1" max="18" onchange="calculate()">
+        <div class="hint">适用于1-18岁</div>
+      </div>
+      <div class="form-item">
+        <label>体重（kg）</label>
+        <input type="number" id="weight" value="16" min="3" max="80" step="0.1" onchange="calculate()">
+      </div>
+      <div class="form-item">
+        <label>治疗阶段</label>
+        <select id="stage" onchange="calculate()">
+          <option value="remission">非应激期（维持/缓解）</option>
+          <option value="chemo" selected>化疗/感染应激期</option>
+          <option value="cachexia">恶液质/重度衰竭期</option>
+        </select>
+        <div class="hint">影响能量和蛋白质系数</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">2</span>每日营养需求</div>
+    <div class="result-grid">
+      <div class="result-box">
+        <div class="label">每天需要能量</div>
+        <div class="value" id="r-energy">—</div>
+        <div class="unit">kcal/d</div>
+      </div>
+      <div class="result-box">
+        <div class="label">每天需要蛋白质</div>
+        <div class="value" id="r-protein">—</div>
+        <div class="unit">g/d</div>
+      </div>
+      <div class="result-box">
+        <div class="label">每公斤体重需要能量</div>
+        <div class="value" id="r-perkg">—</div>
+        <div class="unit">kcal/kg/d</div>
+      </div>
+    </div>
+    <div class="info-box" id="formula-detail" style="display:none">公式计算详情</div>
+    <details style="margin-top:10px;font-size:12px;color:var(--text-light)">
+      <summary style="cursor:pointer">展开查看计算说明</summary>
+      <div id="formula-detail-inner"></div>
+    </details>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">3</span>孩子现在能吃多少，还需要补多少</div>
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="form-item">
+        <label>孩子现在能自己吃下多少</label>
+        <select id="oralRatio" onchange="calculate()">
+          <option value="0">几乎吃不下</option>
+          <option value="0.25">只能吃一点点</option>
+          <option value="0.333">能吃大概三分之一</option>
+          <option value="0.5" selected>能吃大概一半</option>
+          <option value="0.667">能吃大概三分之二</option>
+          <option value="0.75">能吃大部分</option>
+          <option value="1">能完全自己吃</option>
+        </select>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>情况</th><th>补充能量</th><th>小百肽能粉</th><th>勺数</th><th>冲调奶液</th><th>蛋白质</th></tr>
+      </thead>
+      <tbody id="supplement-table"></tbody>
+    </table>
+
+    <div class="result-box" style="margin-top:14px;background:#D4EFDF;border-color:#27AE60">
+      <div class="label" style="font-size:14px">★ 当前推荐用量</div>
+      <div id="r-recommend" style="font-size:16px;font-weight:700;color:var(--accent);margin-top:8px">—</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">4</span>蛋白质摄入够不够</div>
+    <div class="result-grid">
+      <div class="result-box">
+        <div class="label">吃饭能补充的蛋白质</div>
+        <div class="value" id="r-oral-prot" style="font-size:20px">—</div>
+        <div class="unit">g/d</div>
+      </div>
+      <div class="result-box">
+        <div class="label">小百肽能补充的蛋白质</div>
+        <div class="value" id="r-supp-prot" style="font-size:20px">—</div>
+        <div class="unit">g/d</div>
+      </div>
+      <div class="result-box">
+        <div class="label">蛋白质总摄入</div>
+        <div class="value" id="r-total-prot" style="font-size:20px">—</div>
+        <div class="unit">g/d</div>
+      </div>
+      <div class="result-box">
+        <div class="label">是否达标</div>
+        <div class="value" id="r-prot-status" style="font-size:20px">—</div>
+      </div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="prot-progress" style="background:#27AE60;width:0%"></div>
+    </div>
+    <div style="font-size:12px;color:var(--text-light);margin-top:6px">进度条：低于80%为红色，80-99%为黄色，100%以上为绿色</div>
+  </div>
+
+  <!-- AI建议 -->
+  <div class="ai-section">
+    <h3>🤖 AI 营养师</h3>
+    <div class="ai-content" id="ai-advice">点击下方按钮，AI营养师会根据孩子的情况生成营养建议...</div>
+    <div class="btn-group">
+      <button class="btn btn-accent" onclick="getAIAdvice()">生成AI营养建议</button>
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>⚠ 重要提示：</strong>以上为估算值，仅供日常营养参考。如需更精准扣减，请使用「食物替换计算」标签页。最终方案请遵医嘱。
+  </div>
+</div>
+
+<!-- ===== Tab 2: 食物替换计算 ===== -->
+<div class="tab-content" id="tab-food">
+  <div class="card">
+    <div class="card-title"><span class="icon">1</span>孩子每天需要吃多少</div>
+    <div class="result-grid">
+      <div class="result-box">
+        <div class="label">每天能量目标</div>
+        <div class="value" id="f-target-energy">—</div>
+        <div class="unit">kcal/d</div>
+      </div>
+      <div class="result-box">
+        <div class="label">每天蛋白质目标</div>
+        <div class="value" id="f-target-protein">—</div>
+        <div class="unit">g/d</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">2</span>记录孩子今天吃了什么</div>
+    <div class="info-box">在下方表格输入食物名称和重量，自动计算热量和蛋白质。点击选择框可从常见食物中快速选择，也可手动输入。</div>
+    <table class="food-table">
+      <thead>
+        <tr><th style="width:5%">#</th><th style="width:25%">食物名称</th><th style="width:12%">重量(g)</th><th style="width:14%">热量/100g</th><th style="width:14%">蛋白/100g</th><th style="width:14%">摄入热量</th><th style="width:14%">摄入蛋白</th><th style="width:2%"></th></tr>
+      </thead>
+      <tbody id="food-input-body"></tbody>
+      <tbody>
+        <tr style="background:var(--primary);color:#fff;font-weight:700">
+          <td colspan="5" style="text-align:right;padding:10px">经口进食合计 →</td>
+          <td class="calc-cell" id="f-total-kcal" style="font-size:15px;color:var(--accent)">0</td>
+          <td class="calc-cell" id="f-total-prot" style="font-size:15px;color:var(--accent)">0</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="addFoodRow()">+ 添加食物</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">3</span>扣一扣，还需要补多少小百肽能</div>
+    <table>
+      <thead><tr><th>项目</th><th>能量(kcal)</th><th>蛋白质(g)</th></tr></thead>
+      <tbody>
+        <tr><td>每日目标</td><td id="d-target-e">—</td><td id="d-target-p">—</td></tr>
+        <tr><td>经口已摄入</td><td id="d-oral-e">—</td><td id="d-oral-p">—</td></tr>
+        <tr class="highlight-row"><td><strong>还需补充</strong></td><td id="d-need-e">—</td><td id="d-need-p">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">4</span>小百肽能建议补充量</div>
+    <div class="result-grid">
+      <div class="result-box">
+        <div class="label">按能量需求计算</div>
+        <div class="value" id="d-powder-e" style="font-size:20px">—</div>
+        <div class="unit">g 粉剂</div>
+      </div>
+      <div class="result-box">
+        <div class="label">按蛋白质需求计算</div>
+        <div class="value" id="d-powder-p" style="font-size:20px">—</div>
+        <div class="unit">g 粉剂</div>
+      </div>
+      <div class="result-box">
+        <div class="label">★ 建议补充量</div>
+        <div class="value" id="d-final" style="font-size:20px">—</div>
+        <div class="unit" id="d-final-detail">—</div>
+      </div>
+    </div>
+    <div class="result-grid">
+      <div class="result-box">
+        <div class="label">对应勺数</div>
+        <div class="value" id="d-scoops" style="font-size:20px">—</div>
+        <div class="unit">平勺</div>
+      </div>
+      <div class="result-box">
+        <div class="label">标准冲调奶液量</div>
+        <div class="value" id="d-liquid" style="font-size:20px">—</div>
+        <div class="unit">ml</div>
+      </div>
+      <div class="result-box">
+        <div class="label">需加水量</div>
+        <div class="value" id="d-water" style="font-size:20px">—</div>
+        <div class="unit">ml 温水</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ai-section">
+    <h3>🤖 饮食分析</h3>
+    <div class="ai-content" id="ai-food-advice">点击下方按钮，分析今天的饮食记录...</div>
+    <div class="btn-group">
+      <button class="btn btn-accent" onclick="getAIFoodAdvice()">生成AI饮食分析</button>
+    </div>
+  </div>
+
+  <div class="warning">
+    <strong>💡 说明：</strong>建议取「按能量」和「按蛋白质」中较大值，确保孩子能量和蛋白质都够。如果还需补充为负数，说明吃饭已经够了，可不用额外补充。食物热量数据来自《中国食物成分表》，因做法不同会有差异，供参考。
+  </div>
+</div>
+
+<!-- ===== Tab 3: 喂养方案 ===== -->
+<div class="tab-content" id="tab-feeding">
+  <div class="card">
+    <div class="card-title"><span class="icon">1</span>选择能量来源并查看每日总量</div>
+    <div class="info-box" style="margin-bottom:14px">
+      喂养方案的能量有两个来源，您可以根据实际情况选择：<br>
+      <strong>来源一（快速估算）</strong>：在主计算器里选"孩子能吃一半/三分之一"，粗略估算需补充的能量<br>
+      <strong>来源二（精确扣减）</strong>：在「食物替换计算」里输入孩子实际吃了什么，精确算出还需补多少<br>
+      两个数字可能不一样，选一个您觉得更合适的就行。
+    </div>
+    <div class="result-grid" style="margin-bottom:16px">
+      <div class="result-box" id="source1-box" style="cursor:pointer;border-color:var(--primary-light)" onclick="selectFeedSource('estimate')">
+        <div class="label">来源一：快速估算</div>
+        <div class="value" id="feed-energy-1" style="font-size:20px">—</div>
+        <div class="unit" id="feed-detail-1">主计算器预估</div>
+      </div>
+      <div class="result-box" id="source2-box" style="cursor:pointer" onclick="selectFeedSource('food')">
+        <div class="label">来源二：精确扣减</div>
+        <div class="value" id="feed-energy-2" style="font-size:20px">—</div>
+        <div class="unit" id="feed-detail-2">食物替换计算</div>
+      </div>
+    </div>
+    <div class="result-grid" id="feed-active-grid">
+      <div class="result-box"><div class="label">当前选用：每天补充能量</div><div class="value" id="feed-energy" style="font-size:20px">—</div><div class="unit">kcal/d</div></div>
+      <div class="result-box"><div class="label">每天粉剂总量</div><div class="value" id="feed-powder" style="font-size:20px">—</div><div class="unit">g/d</div></div>
+      <div class="result-box"><div class="label">每天奶液总量</div><div class="value" id="feed-liquid" style="font-size:20px">—</div><div class="unit">ml/d</div></div>
+      <div class="result-box"><div class="label">每天总勺数</div><div class="value" id="feed-scoops" style="font-size:20px">—</div><div class="unit">勺/d</div></div>
+    </div>
+    <div class="info-box" id="feed-source-tip" style="display:none;margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">2</span>在家怎么冲泡、怎么喂</div>
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="form-item">
+        <label>每日饮用次数</label>
+        <input type="number" id="oralTimes" value="5" min="3" max="8" onchange="calcFeeding()">
+        <div class="hint">建议3-6次，可调整</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>项目</th><th>数值</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>每次饮用量</td><td id="feed-per-ml" style="font-weight:700;color:var(--accent)">—</td><td>ml/次</td></tr>
+        <tr><td>每次冲调粉量</td><td id="feed-per-g" style="font-weight:700;color:var(--accent)">—</td><td>g/次</td></tr>
+        <tr><td>每次勺数</td><td id="feed-per-scoop" style="font-weight:700;color:var(--accent)">—</td><td>平勺/次</td></tr>
+        <tr><td>每次加水量</td><td id="feed-per-water" style="font-weight:700;color:var(--accent)">—</td><td>ml温水/次</td></tr>
+        <tr><td>每次提供热量</td><td id="feed-per-kcal" style="font-weight:700;color:var(--accent)">—</td><td>kcal/次</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box">
+      <strong>口服冲调指引：</strong><br>
+      1. 洗手，准备消毒过的奶瓶或容器<br>
+      2. 量取温水（约40-50°C），每1勺粉配30ml水<br>
+      3. 先倒水，再加粉，立即搅拌至完全溶解<br>
+      4. 配好后室温4小时内饮用完毕，冷藏不超过12小时<br>
+      5. 开封后4周内用完，存放阴凉干燥处
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">3</span>管饲喂养方案（需医生指导）</div>
+    <div class="form-grid" style="margin-bottom:14px">
+      <div class="form-item">
+        <label>喂养方式</label>
+        <select id="tubeMode" onchange="calcFeeding()">
+          <option value="continuous">连续性滴注</option>
+          <option value="bolus">分次灌注</option>
+        </select>
+      </div>
+      <div class="form-item" id="hours-item">
+        <label>每天喂养小时数</label>
+        <input type="number" id="tubeHours" value="20" min="12" max="24" onchange="calcFeeding()">
+        <div class="hint">建议16-24小时</div>
+      </div>
+      <div class="form-item" id="times-item" style="display:none">
+        <label>每天喂养次数</label>
+        <input type="number" id="tubeTimes" value="5" min="4" max="8" onchange="calcFeeding()">
+        <div class="hint">建议4-6次</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>项目</th><th>目标值</th><th>起始值</th><th>递增速率</th></tr></thead>
+      <tbody id="tube-table"></tbody>
+    </table>
+    <div class="warning">
+      <strong>⚠ 管饲注意事项：</strong>管饲需在医生指导下进行。喂养时保持半卧位（床头抬高30-45°）。每次喂养前后用温水冲洗管道。营养液温度38-40°C。起始速度建议从目标量的25%开始，逐步递增。出现腹泻、腹胀等不耐受时减慢速度或暂停，及时联系医生。
+    </div>
+  </div>
+</div>
+
+<!-- ===== Tab 4: 产品与参考 ===== -->
+<div class="tab-content" id="tab-reference">
+  <div class="card">
+    <div class="card-title"><span class="icon">★</span>关于这款计算器</div>
+    <div class="info-box">
+      本工具根据孩子年龄、体重、当前治疗阶段，结合儿童营养指南，帮您估算每天需要多少能量和蛋白质，以及需要补充多少小百肽能。AI营养师会根据您填写的信息给出个性化建议。所有结果仅供日常参考，具体喂养方案请遵医嘱。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">★</span>雀巢小百肽能产品信息</div>
+    <table>
+      <tbody>
+        <tr><td style="font-weight:700;text-align:right;width:30%">产品名称</td><td>雀巢小百肽能（小佰太能）Peptamen Junior</td></tr>
+        <tr><td style="font-weight:700;text-align:right">品牌</td><td>雀巢健康科学 Nestlé Health Science</td></tr>
+        <tr><td style="font-weight:700;text-align:right">规格</td><td>400g/罐</td></tr>
+        <tr><td style="font-weight:700;text-align:right">注册号</td><td>国食注字TY20195004</td></tr>
+        <tr><td style="font-weight:700;text-align:right">适用人群</td><td>1-10岁进食受限、消化吸收障碍或代谢紊乱的儿童（本计算器扩展支持至18岁青少年）</td></tr>
+        <tr><td style="font-weight:700;text-align:right">蛋白质来源</td><td>100%酶水解乳清蛋白（短肽配方）</td></tr>
+        <tr><td style="font-weight:700;text-align:right">脂肪特点</td><td>MCT（中链甘油三酯）占总脂肪58%，可直接吸收，不刺激胰腺</td></tr>
+        <tr><td style="font-weight:700;text-align:right">乳糖含量</td><td>≤0.4g/100g（无乳糖配方）</td></tr>
+        <tr><td style="font-weight:700;text-align:right">渗透压</td><td>329 mOsm/kg（281 mOsm/L）</td></tr>
+        <tr><td style="font-weight:700;text-align:right">能量密度</td><td>1.0 kcal/ml（标准冲调）</td></tr>
+        <tr><td style="font-weight:700;text-align:right">口味</td><td>香草味</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">★</span>核心营养参数（每100g粉剂）</div>
+    <table>
+      <thead><tr><th>营养素</th><th>每100g粉</th><th>每100ml奶液</th><th>供能比</th></tr></thead>
+      <tbody>
+        <tr><td>能量</td><td>465 kcal</td><td>100 kcal</td><td>—</td></tr>
+        <tr><td>蛋白质</td><td>13.75 g</td><td>3.0 g</td><td>12%</td></tr>
+        <tr><td>脂肪</td><td>17.0 g</td><td>3.7 g</td><td>34%</td></tr>
+        <tr><td>— MCT</td><td>9.2 g</td><td>2.0 g</td><td>占脂肪58%</td></tr>
+        <tr><td>碳水化合物</td><td>60.0 g</td><td>13.0 g</td><td>54%</td></tr>
+        <tr><td>— 乳糖</td><td>&lt;0.4 g</td><td>&lt;0.09 g</td><td>—</td></tr>
+        <tr><td>膳食纤维</td><td>1.4 g</td><td>0.3 g</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">★</span>标准冲调方法</div>
+    <table>
+      <thead><tr><th>项目</th><th>参数</th></tr></thead>
+      <tbody>
+        <tr><td>标准冲调</td><td>7平勺（55g粉）+ 210ml温水（40-50°C）= 250ml奶液</td></tr>
+        <tr><td>每勺参数</td><td>1平勺 ≈ 7.9g粉 ≈ 36.7 kcal</td></tr>
+        <tr><td>每克参数</td><td>1g粉 ≈ 4.65 kcal</td></tr>
+        <tr><td>通用比例</td><td>每30ml水加入1平勺粉</td></tr>
+        <tr><td>保存方法</td><td>开封后4周内用完，存放阴凉干燥处</td></tr>
+        <tr><td>配制后保存</td><td>室温4小时内饮用；冷藏12小时内饮用</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">★</span>营养需求参考依据（供了解）</div>
+    <div class="info-box">
+      能量需求根据孩子的基础消耗乘以治疗阶段消耗系数得出；蛋白质需求根据治疗阶段给出。具体算法可参考WHO儿童能量消耗公式及血液肿瘤营养相关专家共识，已在下方折叠展示。
+    </div>
+    <details>
+      <summary style="cursor:pointer;font-size:13px;color:var(--primary-light);margin-top:6px">查看详细计算依据</summary>
+      <div class="info-box">
+        <strong>1. 基础能量消耗公式：</strong><br>
+        10-18岁男童：17.7 × 体重(kg) + 658<br>
+        10-18岁女童：13.4 × 体重(kg) + 693<br>
+        3-10岁男童：22.7 × 体重(kg) + 504<br>
+        3-10岁女童：20.3 × 体重(kg) + 486<br>
+        1-3岁男童：59.5 × 体重(kg) - 30<br>
+        1-3岁女童：58.3 × 体重(kg) - 31
+      </div>
+      <div class="info-box">
+        <strong>2. 治疗阶段消耗系数：</strong><br>
+        非应激期：1.3 &nbsp;|&nbsp; 化疗/感染期：1.5 &nbsp;|&nbsp; 恶液质/重度衰竭期：1.8
+      </div>
+      <div class="info-box">
+        <strong>3. 蛋白质需求：</strong><br>
+        非应激期：1.2 g/(kg·d) &nbsp;|&nbsp; 化疗/感染期：1.75 g/(kg·d) &nbsp;|&nbsp; 恶液质/重度衰竭期：2.25 g/(kg·d)
+      </div>
+      <div class="info-box">
+        <strong>4. 参考文献：</strong><br>
+        · 血液系统肿瘤患者的营养治疗专家共识<br>
+        · 诸福棠实用儿科学 — 危重症儿童营养支持<br>
+        · Schofield WN. Ann Hum Biol. 1985<br>
+        · WHO儿童能量消耗公式<br>
+        · ASPEN儿科营养指南<br>
+        · 雀巢健康科学小百肽能官方产品数据<br>
+        · 中国食物成分表（食物营养数据来源）
+      </div>
+    </details>
+  </div>
+
+  <div class="warning">
+    <strong>⚠ 免责声明：</strong>本计算器仅供家属日常营养估算参考，不构成医疗建议。所有营养方案请在主治医生或临床营养师指导下使用。小百肽能为特殊医学用途配方食品，需在医生监督下使用，不可用于静脉注射。AI建议由大语言模型生成，仅供参考，不能替代专业医疗判断。
+  </div>
+</div>
+
+<div class="footer">
+  <div class="author-section">
+    <div class="author-card">
+      <div class="author-name">冯洋</div>
+      <div class="author-title">宝宝营养助手 · 作者</div>
+      <img src="assets/douyin-qr.jpg" alt="抖音二维码" />
+      <div class="label">抖音扫码关注<br>@穿马甲的冯博士</div>
+    </div>
+    <div class="qr-divider"></div>
+    <div class="author-card">
+      <div class="author-name">分享本工具</div>
+      <div class="author-title">微信扫码即可使用</div>
+      <img src="assets/site-qr.png" alt="网页二维码" />
+      <div class="label">长按二维码可保存<br>发给需要的家长</div>
+    </div>
+  </div>
+  <div style="margin-bottom:14px">
+    <button class="btn btn-primary" onclick="window.print()" style="font-size:15px;padding:10px 24px">📄 打印/保存为PDF</button>
+  </div>
+  宝宝营养助手 · 小百肽能专用<br>
+  结合儿童营养指南与AI智能建议 · 仅供营养估算参考
+</div>
+
+</div>
+
+<script>
+// ===== 常量 =====
+const PRODUCT = {
+  kcalPer100g: 465,
+  proteinPer100g: 13.75,
+  fatPer100g: 17.0,
+  carbPer100g: 60.0,
+  mctPer100g: 9.2,
+  scoopGram: 7.9,
+  kcalPerScoop: 36.7,
+  kcalPerGram: 4.65,
+  liquidKcalPerMl: 1.0,
+  proteinPerMl: 0.03
+};
+
+const STAGES = {
+  remission: { name:'非应激期', stressFactor:1.3, proteinPerKg:1.2, energyPerKg:'~28' },
+  chemo:     { name:'化疗/感染应激期', stressFactor:1.5, proteinPerKg:1.75, energyPerKg:'~32.5' },
+  cachexia:  { name:'恶液质/重度衰竭期', stressFactor:1.8, proteinPerKg:2.25, energyPerKg:'~37.5' }
+};
+
+// 中国食物成分表 第6版 常见食物 + 化疗期患儿适用食物 (名称, 热量kcal/100g, 蛋白质g/100g)
+const FOOD_DB = [
+  // 主食类
+  ['米饭(蒸)',116,2.6],['米饭(软)',100,2.2],['稀饭/粥(白米)',46,1.1],['小米粥',46,1.4],['南瓜粥',38,1.0],
+  ['馒头',221,7.0],['花卷',217,6.4],['包子(菜)',168,4.8],['包子(肉)',227,7.3],['馄饨',200,6.0],
+  ['面条(煮)',110,3.5],['面条(干)',284,8.3],['挂面',348,10.3],['面片汤',105,2.8],['疙瘩汤',95,2.5],
+  ['面包',312,8.3],['吐司',264,8.5],['苏打饼干',408,8.4],['曲奇',546,7.0],['蛋糕',347,7.1],
+  ['玉米(鲜)',112,4.0],['玉米面粥',90,2.5],['红薯',99,1.1],['紫薯',133,1.2],['土豆',76,2.0],['山药',57,1.9],
+  // 蛋奶豆类
+  ['鸡蛋(全)',147,12.8],['鸡蛋羹',120,9.0],['煮鸡蛋',143,12.6],['荷包蛋',150,12.0],['鹌鹑蛋',160,13.1],
+  ['鸡蛋白',60,11.6],['鸭蛋',180,12.6],['牛奶',54,3.0],['奶粉(全脂)',478,24.1],['酸奶',72,2.5],
+  ['儿童酸奶',85,3.0],['奶酪',328,25.7],['奶酪棒',240,18.0],['炼乳',332,7.9],
+  ['豆浆',14,1.8],['豆腐脑',30,2.6],['豆腐(北)',98,12.2],['豆腐(南)',57,6.2],['嫩豆腐',49,5.5],['豆腐干',140,16.2],
+  ['千张',262,24.5],['腐竹',461,44.6],['毛豆',131,13.1],['蚕豆',104,8.8],['豌豆',105,7.4],
+  // 肉类
+  ['鸡胸肉',133,19.4],['鸡腿肉',181,16.0],['鸡翅',194,17.4],['鸡汤(去油)',20,1.2],['鸡肉泥',130,18.0],
+  ['鱼肉(平均)',113,16.6],['鲈鱼',105,18.6],['三文鱼',208,17.2],['鳕鱼',82,17.8],['龙利鱼',86,17.0],['鲫鱼',108,17.1],
+  ['虾肉',83,16.6],['虾仁',81,18.6],['虾皮',153,30.1],['花甲',62,10.1],
+  ['猪瘦肉',143,20.3],['猪肝',129,19.3],['猪排骨',278,16.7],['牛肉(瘦)',106,20.2],['牛里脊',103,22.2],['羊肉(瘦)',118,20.5],
+  ['肉丸(猪肉)',321,14.0],['肉松',396,25.1],['火腿肠',212,12.0],['午餐肉',229,11.0],
+  // 蔬果类
+  ['菠菜',28,2.6],['小白菜',14,1.1],['油菜',14,1.4],['生菜',15,1.4],['油麦菜',8,1.4],['娃娃菜',13,1.0],
+  ['西蓝花',34,4.1],['花菜',20,1.9],['卷心菜',25,1.3],['胡萝卜',40,1.2],['白萝卜',16,0.7],['冬瓜',10,0.4],['丝瓜',20,1.3],
+  ['南瓜',22,0.7],['西葫芦',19,0.9],['番茄',18,0.9],['黄瓜',15,0.8],['茄子',23,1.0],['蘑菇',24,2.0],['金针菇',32,2.4],['香菇',26,2.2],
+  ['苹果',52,0.2],['香蕉',91,1.4],['梨',51,0.3],['橙子',47,0.9],['橘子',44,0.8],['猕猴桃',56,0.8],['葡萄',43,0.5],['蓝莓',57,0.7],
+  ['草莓',32,0.7],['火龙果',51,1.1],['西瓜',30,0.6],['哈密瓜',34,0.5],['芒果',60,0.8],['牛油果',160,2.0],['红枣(鲜)',122,1.1],['枸杞',258,13.9],
+  // 其他
+  ['核桃',646,14.9],['花生(生)',313,12.1],['芝麻',536,18.3],['花生酱',590,25.0],['芝麻酱',595,19.2],['紫菜',250,26.7],
+  ['藕粉',373,0.2],['汤圆(黑芝麻)',311,4.4],['饺子(猪肉韭菜)',220,7.5],['蒸蛋羹',100,8.0],['蛋花汤',55,3.0],
+  ['巧克力',586,4.9],['棒棒糖',400,0],['冰淇淋(香草)',201,3.5],['酸奶雪糕',160,3.0]
+];
+
+// ===== Schofield BMR 计算 =====
+function calcBMR(gender, age, weight) {
+  if (age >= 10 && age <= 18) {
+    return gender === 'male' ? 17.686 * weight + 658.2 : 13.384 * weight + 692.6;
+  } else if (age >= 3 && age < 10) {
+    return gender === 'male' ? 22.706 * weight + 504.3 : 20.315 * weight + 485.9;
+  } else if (age >= 1 && age < 3) {
+    return gender === 'male' ? 59.512 * weight - 30.4 : 58.317 * weight - 31.1;
+  }
+  return 0;
+}
+
+// ===== 主计算 =====
+let currentData = {};
+
+function calculate() {
+  const gender = document.getElementById('gender').value;
+  const age = parseFloat(document.getElementById('age').value) || 0;
+  const weight = parseFloat(document.getElementById('weight').value) || 0;
+  const stageKey = document.getElementById('stage').value;
+  const stage = STAGES[stageKey];
+  const oralRatio = parseFloat(document.getElementById('oralRatio').value);
+
+  if (weight <= 0 || age <= 0) return;
+
+  const bmr = calcBMR(gender, age, weight);
+  const totalEnergy = Math.round(bmr * stage.stressFactor);
+  const totalProtein = Math.round(stage.proteinPerKg * weight * 10) / 10;
+  const perKg = Math.round(totalEnergy / weight * 10) / 10;
+
+  document.getElementById('r-energy').textContent = totalEnergy;
+  document.getElementById('r-protein').textContent = totalProtein;
+  document.getElementById('r-perkg').textContent = perKg;
+
+  // 公式详情（可折叠，供有需要的家属查看）
+  const genderText = gender === 'male' ? '男' : '女';
+  let formulaStr;
+  if (age >= 10) {
+    formulaStr = gender === 'male' ? `17.7 × ${weight} + 658` : `13.4 × ${weight} + 693`;
+  } else if (age >= 3) {
+    formulaStr = gender === 'male' ? `22.7 × ${weight} + 504` : `20.3 × ${weight} + 486`;
+  } else {
+    formulaStr = gender === 'male' ? `59.5 × ${weight} - 30` : `58.3 × ${weight} - 31`;
+  }
+  document.getElementById('formula-detail-inner').innerHTML =
+    `根据孩子年龄、体重和当前治疗阶段，计算每日能量和蛋白质需求。<br>
+     基础消耗 = ${formulaStr} = ${Math.round(bmr)} kcal/d，再考虑${stage.name}的消耗系数 ${stage.stressFactor}，最终每日能量需求为 ${totalEnergy} kcal/d。<br>
+     蛋白质需求 = ${stage.proteinPerKg} g/kg × ${weight} kg = ${totalProtein} g/d。`;
+
+  // 补充方案表
+  const suppRatios = [
+    {label:'全量补充（100%）', ratio:1.0},
+    {label:'补充1/2（50%）', ratio:0.5},
+    {label:'补充1/3（33%）', ratio:0.333},
+    {label:'补充1/4（25%）', ratio:0.25}
+  ];
+  let html = '';
+  suppRatios.forEach(s => {
+    const e = Math.round(totalEnergy * s.ratio);
+    const g = (e / PRODUCT.kcalPerGram).toFixed(1);
+    const scoops = (g / PRODUCT.scoopGram).toFixed(1);
+    const ml = Math.round(e / PRODUCT.liquidKcalPerMl);
+    const p = (g * PRODUCT.proteinPer100g / 100).toFixed(1);
+    const isHighlight = Math.abs(s.ratio - (1 - oralRatio)) < 0.01;
+    html += `<tr class="${isHighlight?'highlight-row':''}">
+      <td>${s.label}</td><td>${e}</td><td>${g}</td><td>${scoops}</td><td>${ml}</td><td>${p}</td>
+    </tr>`;
+  });
+  document.getElementById('supplement-table').innerHTML = html;
+
+  // 当前推荐
+  const suppRatio = 1 - oralRatio;
+  const suppEnergy = Math.round(totalEnergy * suppRatio);
+  const suppGrams = (suppEnergy / PRODUCT.kcalPerGram).toFixed(1);
+  const suppScoops = (suppGrams / PRODUCT.scoopGram).toFixed(1);
+  const suppMl = Math.round(suppEnergy / PRODUCT.liquidKcalPerMl);
+  document.getElementById('r-recommend').innerHTML =
+    `需补充能量 <strong>${suppEnergy} kcal</strong> → 小百肽能 <strong>${suppGrams}g</strong>（${suppScoops}勺）→ 冲调奶液 <strong>${suppMl}ml</strong>`;
+
+  // 蛋白质达标
+  const oralProt = (totalProtein * oralRatio).toFixed(1);
+  const suppProt = (parseFloat(suppGrams) * PRODUCT.proteinPer100g / 100).toFixed(1);
+  const totalProt = (parseFloat(oralProt) + parseFloat(suppProt)).toFixed(1);
+  const protPct = Math.min(100, Math.round(totalProt / totalProtein * 100));
+
+  document.getElementById('r-oral-prot').textContent = oralProt;
+  document.getElementById('r-supp-prot').textContent = suppProt;
+  document.getElementById('r-total-prot').textContent = totalProt;
+  const statusEl = document.getElementById('r-prot-status');
+  if (totalProt >= totalProtein) {
+    statusEl.innerHTML = '✓ 达标';
+    statusEl.style.color = '#27AE60';
+  } else {
+    statusEl.innerHTML = '✗ 不足';
+    statusEl.style.color = '#E74C3C';
+  }
+  document.getElementById('prot-progress').style.width = protPct + '%';
+  if (protPct < 80) document.getElementById('prot-progress').style.background = '#E74C3C';
+  else if (protPct < 100) document.getElementById('prot-progress').style.background = '#F39C12';
+  else document.getElementById('prot-progress').style.background = '#27AE60';
+
+  // 保存当前数据
+  currentData = { gender, age, weight, stage: stageKey, stageName: stage.name, bmr: Math.round(bmr), totalEnergy, totalProtein, oralRatio, suppRatio, suppEnergy, suppGrams: parseFloat(suppGrams), suppScoops: parseFloat(suppScoops), suppMl };
+
+  // 同步食物替换计算和喂养方案
+  syncFoodTab();
+  syncFeedingTab();
+}
+
+// 填充折叠详情
+function switchTab(tabId, evt) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  if (evt && evt.target) evt.target.classList.add('active');
+  document.getElementById('tab-' + tabId).classList.add('active');
+  if (tabId === 'food') syncFoodTab();
+  if (tabId === 'feeding') syncFeedingTab();
+}
+
+// ===== 食物替换计算 =====
+let foodRows = [];
+
+function initFoodRows() {
+  foodRows = [
+    {name:'米饭(蒸)', gram:100, kcal100:116, prot100:2.6},
+    {name:'鸡蛋(全)', gram:50, kcal100:147, prot100:12.8},
+    {name:'牛奶', gram:200, kcal100:54, prot100:3.0},
+    {name:'鸡胸肉', gram:50, kcal100:133, prot100:19.4}
+  ];
+  renderFoodTable();
+}
+
+function addFoodRow() {
+  foodRows.push({name:'', gram:0, kcal100:0, prot100:0});
+  renderFoodTable();
+}
+
+function removeFoodRow(idx) {
+  foodRows.splice(idx, 1);
+  renderFoodTable();
+}
+
+function updateFoodRow(idx, field, value) {
+  if (field === 'name') {
+    foodRows[idx].name = value;
+    // 自动匹配食物库
+    const match = FOOD_DB.find(f => f[0] === value);
+    if (match) {
+      foodRows[idx].kcal100 = match[1];
+      foodRows[idx].prot100 = match[2];
+    }
+  } else if (field === 'gram') {
+    foodRows[idx].gram = parseFloat(value) || 0;
+  } else if (field === 'kcal100') {
+    foodRows[idx].kcal100 = parseFloat(value) || 0;
+  } else if (field === 'prot100') {
+    foodRows[idx].prot100 = parseFloat(value) || 0;
+  }
+  renderFoodTable();
+}
+
+function renderFoodTable() {
+  let html = '';
+  let totalK = 0, totalP = 0;
+  foodRows.forEach((f, i) => {
+    const k = f.gram * f.kcal100 / 100;
+    const p = f.gram * f.prot100 / 100;
+    totalK += k;
+    totalP += p;
+    const options = FOOD_DB.map(fd => `<option value="${fd[0]}" ${fd[0]===f.name?'selected':''}>${fd[0]} (${fd[1]}kcal, ${fd[2]}g蛋白)</option>`).join('');
+    html += `<tr>
+      <td>${i+1}</td>
+      <td><input type="text" list="food-list" class="food-name" value="${f.name}" onchange="updateFoodRow(${i},'name',this.value)" placeholder="选择或输入食物"></td>
+      <td><input type="number" class="food-gram" value="${f.gram||''}" onchange="updateFoodRow(${i},'gram',this.value)" placeholder="0"></td>
+      <td><input type="number" class="food-gram" value="${f.kcal100||''}" onchange="updateFoodRow(${i},'kcal100',this.value)" placeholder="0"></td>
+      <td><input type="number" class="food-gram" value="${f.prot100||''}" onchange="updateFoodRow(${i},'prot100',this.value)" placeholder="0"></td>
+      <td class="calc-cell">${k.toFixed(1)}</td>
+      <td class="calc-cell">${p.toFixed(1)}</td>
+      <td><button onclick="removeFoodRow(${i})" style="border:none;background:none;color:#E74C3C;cursor:pointer;font-size:16px">✕</button></td>
+    </tr>`;
+  });
+  document.getElementById('food-input-body').innerHTML = html;
+  document.getElementById('f-total-kcal').textContent = totalK.toFixed(1);
+  document.getElementById('f-total-prot').textContent = totalP.toFixed(1);
+
+  // 扣减计算
+  if (currentData.totalEnergy) {
+    const needE = currentData.totalEnergy - totalK;
+    const needP = currentData.totalProtein - totalP;
+    document.getElementById('f-target-energy').textContent = currentData.totalEnergy;
+    document.getElementById('f-target-protein').textContent = currentData.totalProtein;
+    document.getElementById('d-target-e').textContent = currentData.totalEnergy;
+    document.getElementById('d-target-p').textContent = currentData.totalProtein;
+    document.getElementById('d-oral-e').textContent = totalK.toFixed(1);
+    document.getElementById('d-oral-p').textContent = totalP.toFixed(1);
+    document.getElementById('d-need-e').textContent = needE.toFixed(0);
+    document.getElementById('d-need-p').textContent = needP.toFixed(1);
+
+    const powderE = needE > 0 ? (needE / PRODUCT.kcalPerGram).toFixed(1) : '0';
+    const powderP = needP > 0 ? (needP / (PRODUCT.proteinPer100g/100)).toFixed(1) : '0';
+    const finalPowder = Math.max(parseFloat(powderE), parseFloat(powderP));
+    const finalSource = parseFloat(powderE) >= parseFloat(powderP) ? '按能量需求' : '按蛋白质需求';
+
+    document.getElementById('d-powder-e').textContent = powderE;
+    document.getElementById('d-powder-p').textContent = powderP;
+    document.getElementById('d-final').textContent = finalPowder.toFixed(1) + 'g';
+    document.getElementById('d-final-detail').textContent = finalSource + ' · ' + (finalPowder/PRODUCT.scoopGram).toFixed(1) + '勺';
+    document.getElementById('d-scoops').textContent = (finalPowder/PRODUCT.scoopGram).toFixed(1);
+    document.getElementById('d-liquid').textContent = Math.round(finalPowder * 250 / 55);
+    document.getElementById('d-water').textContent = Math.round(finalPowder * 210 / 55);
+    
+    // 同步到喂养方案来源二
+    foodTabData = {
+      suppEnergy: Math.max(0, Math.round(needE)),
+      suppGrams: Math.max(0, parseFloat(finalPowder.toFixed(1))),
+      suppMl: Math.max(0, Math.round(finalPowder * 250 / 55)),
+      suppScoops: Math.max(0, parseFloat((finalPowder/PRODUCT.scoopGram).toFixed(1))),
+      hasData: foodRows.some(f => f.name && f.gram > 0)
+    };
+    // 如果当前在喂养方案页，更新来源二显示
+    if (feedTabInitialized) {
+      updateFeedSourceDisplay();
+      if (feedSource === 'food') {
+        updateFeedSourceUI();
+        calcFeeding();
+      }
+    }
+  }
+}
+
+function syncFoodTab() {
+  if (foodRows.length === 0) initFoodRows();
+  renderFoodTable();
+}
+
+// ===== 喂养方案 =====
+// feedSource: 'estimate' = 主计算器预估, 'food' = 食物替换精确扣减
+let feedSource = 'estimate';
+let foodTabData = { suppEnergy: 0, suppGrams: 0, suppMl: 0, suppScoops: 0, hasData: false };
+
+function selectFeedSource(source) {
+  feedSource = source;
+  updateFeedSourceUI();
+  calcFeeding();
+}
+
+function updateFeedSourceUI() {
+  const box1 = document.getElementById('source1-box');
+  const box2 = document.getElementById('source2-box');
+  if (feedSource === 'estimate') {
+    box1.style.borderColor = 'var(--primary-light)';
+    box1.style.background = 'var(--result-bg)';
+    box2.style.borderColor = 'var(--border)';
+    box2.style.background = 'var(--card)';
+  } else {
+    box2.style.borderColor = 'var(--primary-light)';
+    box2.style.background = 'var(--result-bg)';
+    box1.style.borderColor = 'var(--border)';
+    box1.style.background = 'var(--card)';
+  }
+  
+  const tip = document.getElementById('feed-source-tip');
+  if (feedSource === 'estimate') {
+    tip.style.display = 'none';
+  } else {
+    tip.style.display = 'block';
+    if (!foodTabData.hasData || foodTabData.suppEnergy <= 0) {
+      tip.innerHTML = '<strong>提示：</strong>您还没在「食物替换计算」里输入食物记录，来源二暂无数据。请先去填写孩子实际吃了什么，再来这里选择来源二。';
+      tip.className = 'warning';
+    } else {
+      tip.className = 'info-box';
+      tip.innerHTML = '当前使用<strong>食物替换计算</strong>的精确扣减结果。如想切换回快速估算，点击上方"来源一"。';
+    }
+  }
+}
+
+// 获取当前选中的数据源数据
+function getActiveFeedData() {
+  if (feedSource === 'food' && foodTabData.hasData && foodTabData.suppEnergy > 0) {
+    return foodTabData;
+  }
+  return {
+    suppEnergy: currentData.suppEnergy || 0,
+    suppGrams: currentData.suppGrams || 0,
+    suppMl: currentData.suppMl || 0,
+    suppScoops: currentData.suppScoops || 0
+  };
+}
+
+// 更新两个来源的数值显示
+function updateFeedSourceDisplay() {
+  // 来源一：主计算器预估
+  if (currentData.suppEnergy) {
+    document.getElementById('feed-energy-1').textContent = currentData.suppEnergy + ' kcal';
+    document.getElementById('feed-detail-1').textContent = 
+      '主计算器 · 补' + currentData.suppGrams + 'g / ' + currentData.suppScoops + '勺';
+  }
+  
+  // 来源二：食物替换精确扣减
+  if (foodTabData.hasData && foodTabData.suppEnergy > 0) {
+    document.getElementById('feed-energy-2').textContent = foodTabData.suppEnergy + ' kcal';
+    document.getElementById('feed-detail-2').textContent = 
+      '食物替换 · 补' + foodTabData.suppGrams + 'g / ' + foodTabData.suppScoops + '勺';
+  } else {
+    document.getElementById('feed-energy-2').textContent = '未填写';
+    document.getElementById('feed-detail-2').textContent = '请先去食物替换计算填写';
+  }
+}
+
+function syncFeedingTab() {
+  updateFeedSourceDisplay();
+  updateFeedSourceUI();
+  calcFeeding();
+  feedTabInitialized = true;
+}
+
+// 定时刷新来源数值显示
+setInterval(() => {
+  if (currentData.suppEnergy && feedTabInitialized) {
+    updateFeedSourceDisplay();
+  }
+}, 2000);
+
+function calcFeeding() {
+  const active = getActiveFeedData();
+  if (!active.suppEnergy) return;
+  
+  const totalMl = active.suppMl;
+  const totalG = active.suppGrams;
+  const totalScoops = active.suppScoops;
+  const totalKcal = active.suppEnergy;
+
+  // 更新当前选中的总量显示
+  document.getElementById('feed-energy').textContent = totalKcal;
+  document.getElementById('feed-powder').textContent = totalG;
+  document.getElementById('feed-liquid').textContent = totalMl;
+  document.getElementById('feed-scoops').textContent = totalScoops;
+
+  // 口服
+  const times = parseInt(document.getElementById('oralTimes').value) || 5;
+  document.getElementById('feed-per-ml').textContent = Math.round(totalMl / times);
+  document.getElementById('feed-per-g').textContent = (totalG / times).toFixed(1);
+  document.getElementById('feed-per-scoop').textContent = (totalScoops / times).toFixed(1);
+  document.getElementById('feed-per-water').textContent = Math.round(totalG / times * 210 / 55);
+  document.getElementById('feed-per-kcal').textContent = Math.round(totalKcal / times);
+
+  // 管饲
+  const mode = document.getElementById('tubeMode').value;
+  document.getElementById('hours-item').style.display = mode === 'continuous' ? 'flex' : 'none';
+  document.getElementById('times-item').style.display = mode === 'bolus' ? 'flex' : 'none';
+
+  let tubeHtml = '';
+  if (mode === 'continuous') {
+    const hours = parseInt(document.getElementById('tubeHours').value) || 20;
+    const rate = Math.round(totalMl / hours);
+    const startRate = Math.round(rate * 0.25);
+    const incRate = Math.round(rate * 0.25);
+    tubeHtml = `
+      <tr><td>滴注速度</td><td>${rate} ml/h</td><td>${startRate} ml/h</td><td>+${incRate} ml/h (每4-8h)</td></tr>
+      <tr><td>每小时热量</td><td>${Math.round(totalKcal/hours)} kcal/h</td><td>—</td><td>—</td></tr>
+      <tr><td>每日总液量</td><td>${totalMl} ml</td><td>—</td><td>—</td></tr>
+    `;
+  } else {
+    const tubeTimes = parseInt(document.getElementById('tubeTimes').value) || 5;
+    const perMl = Math.round(totalMl / tubeTimes);
+    const startMl = Math.round(perMl * 0.5);
+    const incMl = Math.round(perMl * 0.25);
+    tubeHtml = `
+      <tr><td>每次灌注量</td><td>${perMl} ml/次</td><td>${startMl} ml/次</td><td>+${incMl} ml/次 (每1-2天)</td></tr>
+      <tr><td>每次热量</td><td>${Math.round(totalKcal/tubeTimes)} kcal/次</td><td>—</td><td>—</td></tr>
+      <tr><td>每日总液量</td><td>${totalMl} ml</td><td>—</td><td>—</td></tr>
+    `;
+  }
+  document.getElementById('tube-table').innerHTML = tubeHtml;
+}
+
+// ===== AI建议 =====
+// 默认使用用户提供的智谱GLM API Key，同时保留内置智能建议引擎作为降级
+
+const AI_CONFIG = {
+  url: 'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+  model: 'glm-4-flash',
+  apiKey: 'd28d14977be6491f9f8255448b2147f4.xyuHxhXLWNo0aseE'
+};
+
+async function callAI(prompt) {
+  try {
+    const response = await fetch(AI_CONFIG.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + AI_CONFIG.apiKey
+      },
+      body: JSON.stringify({
+        model: AI_CONFIG.model,
+        messages: [
+          { role: 'system', content: '你是一位专业的儿科营养师，专门为白血病（血液肿瘤）患儿的家属提供营养指导。使用雀巢小百肽能（Peptamen Junior）作为唯一肠内营养产品。回答用中文，亲切易懂，避免过多英文缩写和复杂公式，重点讲清楚每天怎么吃、怎么冲调、注意什么。使用markdown格式，不超过400字。' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.7,
+        max_tokens: 800
+      })
+    });
+    if (!response.ok) throw new Error('API error: ' + response.status);
+    const data = await response.json();
+    return data.choices[0].message.content;
+  } catch(e) {
+    console.warn('AI API调用失败，使用本地建议:', e.message);
+    return generateLocalAdvice(prompt) + '\n\n> ⚠ AI在线服务暂不可用（' + e.message + '），以上为本地智能分析。';
+  }
+}
+
+function generateLocalAdvice(prompt) {
+  if (prompt.includes('食物') || prompt.includes('饮食')) {
+    const totalK = parseFloat(document.getElementById('f-total-kcal').textContent) || 0;
+    const totalP = parseFloat(document.getElementById('f-total-prot').textContent) || 0;
+    const targetE = currentData.totalEnergy || 0;
+    const targetP = currentData.totalProtein || 0;
+    const pct = targetE > 0 ? Math.round(totalK/targetE*100) : 0;
+    const protPct = targetP > 0 ? Math.round(totalP/targetP*100) : 0;
+    const needE = Math.max(0, targetE - totalK);
+    const needP = Math.max(0, targetP - totalP);
+    const powderE = (needE / PRODUCT.kcalPerGram).toFixed(1);
+    const powderP = (needP / (PRODUCT.proteinPer100g/100)).toFixed(1);
+    const finalPowder = Math.max(parseFloat(powderE), parseFloat(powderP));
+    
+    let assessment = '';
+    let suggestions = '';
+    
+    if (pct < 30) {
+      assessment = '⚠ **经口摄入严重不足**（仅目标的' + pct + '%），患儿处于高营养风险状态。';
+      suggestions = '1. 建议以小百肽能为主要营养来源，经口进食为辅\n2. 如口服困难，建议与医生评估管饲可行性\n3. 每日5-6次少量口服，每次50-100ml\n4. 密切监测体重，如连续3天下降需就医';
+    } else if (pct < 50) {
+      assessment = '⚠ **经口摄入不足**（目标的' + pct + '%），需较多肠内营养补充。';
+      suggestions = '1. 小百肽能补充量占总营养的50-70%\n2. 鼓励经口进食高蛋白食物：鸡蛋羹、鱼肉泥、豆腐\n3. 化疗期食欲差时可少量多次饮用小百肽能\n4. 每周称重2次，体重下降>5%需联系医生';
+    } else if (pct < 80) {
+      assessment = '⚠ **经口部分摄入**（目标的' + pct + '%），需适量补充。';
+      suggestions = '1. 小百肽能补充约' + finalPowder + 'g（约' + (finalPowder/PRODUCT.scoopGram).toFixed(0) + '勺）\n2. 分3-4次口服，每次约' + Math.round(finalPowder*250/55/4) + 'ml\n3. 优先保证蛋白质摄入：鸡蛋、牛奶、鱼肉\n4. 注意补充维生素和矿物质';
+    } else if (pct < 100) {
+      assessment = '✓ **经口摄入接近达标**（目标的' + pct + '%），少量补充即可。';
+      suggestions = '1. 小百肽能补充约' + finalPowder + 'g作为营养保险\n2. 可早晚各1次，每次约' + Math.round(finalPowder*250/55/2) + 'ml\n3. 继续保持当前饮食结构\n4. 关注蛋白质是否达标（当前' + protPct + '%）';
+    } else {
+      assessment = '✓ **经口摄入已达标**（' + pct + '%），能量充足。';
+      if (protPct < 100) {
+        suggestions = '1. 能量已达标，但蛋白质仅' + protPct + '%，建议补充小百肽能' + powderP + 'g弥补蛋白质缺口\n2. 可增加高蛋白食物：鸡胸肉、鸡蛋、奶酪';
+      } else {
+        suggestions = '1. 能量和蛋白质均达标，可不额外补充小百肽能\n2. 维持当前饮食结构\n3. 小百肽能可作为加餐或营养保险少量饮用';
+      }
+    }
+    
+    // 化疗期特殊建议
+    let chemoTips = '';
+    if (currentData.stageName && currentData.stageName.includes('化疗')) {
+      chemoTips = '\n\n**化疗期特别提示：**\n- 使用门冬酰胺酶期间需低脂饮食，小百肽能MCT占58%不刺激胰腺，适合此期使用\n- 口腔黏膜炎时改为凉/冷流质，小百肽能可冷藏后饮用\n- 呕吐严重时暂停口服15-30分钟，之后小口慢饮\n- 中性粒细胞减少期食物需彻底加热，小百肽能冲调水温40-50°C即可';
+    }
+    
+    return '## 饮食分析报告\n\n' +
+      '**经口摄入评估：**\n' +
+      '- 能量：' + totalK.toFixed(0) + ' kcal / 目标 ' + targetE + ' kcal（' + pct + '%）\n' +
+      '- 蛋白质：' + totalP.toFixed(1) + ' g / 目标 ' + targetP + ' g（' + protPct + '%）\n\n' +
+      assessment + '\n\n' +
+      '**建议补充：**\n' +
+      '- 按能量：需小百肽能 ' + powderE + 'g\n' +
+      '- 按蛋白质：需小百肽能 ' + powderP + 'g\n' +
+      '- 建议取较大值：**' + finalPowder + 'g**（约' + (finalPowder/PRODUCT.scoopGram).toFixed(1) + '勺）\n\n' +
+      '**个性化建议：**\n' + suggestions + chemoTips;
+  }
+  
+  const d = currentData;
+  const bmi = (d.weight / Math.pow(d.age * 0.5 + 0.7, 2)).toFixed(1); // 粗略估算
+  const protFromSupp = (d.suppGrams * PRODUCT.proteinPer100g / 100).toFixed(1);
+  const protFromOral = (d.totalProtein * d.oralRatio).toFixed(1);
+  const protTotal = (parseFloat(protFromSupp) + parseFloat(protFromOral)).toFixed(1);
+  const protPct = Math.round(parseFloat(protTotal) / d.totalProtein * 100);
+  
+  let stageAdvice = '';
+  if (d.stage === 'remission') {
+    stageAdvice = '当前处于非应激期，营养需求相对稳定。重点是维持体重和正常生长发育，预防营养不良。建议每月评估一次营养状况。';
+  } else if (d.stage === 'chemo') {
+    stageAdvice = '化疗期是营养干预的关键窗口。能量需求增加50%，蛋白质需求1.5-2.0g/kg/d。常见问题：\n- 食欲下降 → 少量多餐，每日5-6餐\n- 恶心呕吐 → 干性食物（馒头、饼干）先吃，小百肽能餐间服用\n- 口腔黏膜炎 → 凉流质，避免酸辣\n- 腹泻 → 低渗配方，小百肽能渗透压329mOsm/kg较为适宜\n- 便秘 → 增加水分和膳食纤维';
+  } else if (d.stage === 'cachexia') {
+    stageAdvice = '恶液质期营养支持极具挑战。能量需求增加80%，但患儿耐受性差。建议：\n- 从低速率开始逐步递增\n- 优先考虑管饲保证摄入量\n- 监测再喂养综合征（低磷、低钾、低镁）\n- 补充谷氨酰胺有助于肠道屏障\n- 密切监测电解质和肝肾功能';
+  }
+  
+  let protStatus = '';
+  if (protPct >= 100) {
+    protStatus = '✓ 蛋白质摄入达标（' + protPct + '%），有助于维持肌肉量和免疫功能';
+  } else if (protPct >= 80) {
+    protStatus = '⚠ 蛋白质摄入 borderline（' + protPct + '%），建议适当增加小百肽能用量';
+  } else {
+    protStatus = '✗ 蛋白质摄入不足（' + protPct + '%），需增加小百肽能或高蛋白食物';
+  }
+  
+  return '## 营养评估报告\n\n' +
+    '**孩子概况：**\n' +
+    '- ' + (d.gender==='male'?'男':'女') + '孩，' + d.age + '岁，' + d.weight + 'kg\n' +
+    '- 当前阶段：' + d.stageName + '\n' +
+    '- 每天能量需求：' + d.totalEnergy + ' kcal（约' + Math.round(d.totalEnergy/d.weight) + ' kcal/kg）\n' +
+    '- 每天蛋白质需求：' + d.totalProtein + ' g（约' + (d.totalProtein/d.weight).toFixed(2) + ' g/kg）\n\n' +
+    '**营养方案：**\n' +
+    '- 经口比例：' + (d.oralRatio*100).toFixed(0) + '%\n' +
+    '- 小百肽能补充：' + d.suppGrams + 'g（' + d.suppScoops + '勺）= ' + d.suppMl + 'ml奶液\n' +
+    '- 补充能量：' + d.suppEnergy + ' kcal\n' +
+    '- 蛋白质来源：经口' + protFromOral + 'g + 小百肽能' + protFromSupp + 'g = 合计' + protTotal + 'g\n' +
+    '- ' + protStatus + '\n\n' +
+    '**阶段营养指导：**\n' + stageAdvice + '\n\n' +
+    '**喂养建议：**\n' +
+    '1. 分' + (document.getElementById('oralTimes')?.value || 5) + '次口服，每次约' + Math.round(d.suppMl/(parseInt(document.getElementById('oralTimes')?.value)||5)) + 'ml\n' +
+    '2. 配制水温40-50°C，先加水后加粉，立即搅拌\n' +
+    '3. 室温4小时内饮用，冷藏12小时内饮用\n' +
+    '4. 每周至少称重2次，体重变化>5%需联系医生\n' +
+    '5. 定期监测血常规、白蛋白、前白蛋白\n\n' +
+    '> 💡 以上为智能分析建议，最终结果请遵医嘱。';
+}
+
+async function getAIAdvice() {
+  const el = document.getElementById('ai-advice');
+  el.classList.add('loading');
+  el.textContent = '正在生成AI营养建议...';
+  const d = currentData;
+  const prompt = `请为以下白血病患儿生成个性化肠内营养建议，用家长能听懂的话：
+- 性别：${d.gender==='male'?'男':'女'}童
+- 年龄：${d.age}岁
+- 体重：${d.weight}kg
+- 治疗阶段：${d.stageName}
+- 每天能量需求：${d.totalEnergy} kcal
+- 每天蛋白质需求：${d.totalProtein} g
+- 孩子能自己吃下的比例：${(d.oralRatio*100).toFixed(0)}%
+- 小百肽能建议补充：${d.suppGrams}g（约${d.suppScoops}勺），冲调成${d.suppMl}ml
+
+请从以下角度给出建议：
+1. 孩子营养够不够？
+2. 每天怎么喝小百肽能？（分几次、每次多少）
+3. 化疗期间特别要注意什么？
+4. 在家需要观察哪些指标？
+语言亲切、实用，不超过400字。`;
+
+  const result = await callAI(prompt);
+  el.classList.remove('loading');
+  el.innerHTML = formatMarkdown(result);
+}
+
+async function getAIFoodAdvice() {
+  const el = document.getElementById('ai-food-advice');
+  el.classList.add('loading');
+  el.textContent = '正在分析饮食记录...';
+  
+  const foodList = foodRows.filter(f => f.name && f.gram > 0).map(f => 
+    `${f.name} ${f.gram}g (${(f.gram*f.kcal100/100).toFixed(0)}kcal, ${(f.gram*f.prot100/100).toFixed(1)}g蛋白)`
+  ).join('、');
+  
+  const totalK = foodRows.reduce((s,f) => s + f.gram*f.kcal100/100, 0);
+  const totalP = foodRows.reduce((s,f) => s + f.gram*f.prot100/100, 0);
+  
+  const prompt = `请分析以下白血病患儿的饮食记录，用家长能听懂的话给出建议：
+- 患儿：${currentData.gender==='male'?'男':'女'}童，${currentData.age}岁，${currentData.weight}kg
+- 治疗阶段：${currentData.stageName}
+- 每天能量目标：${currentData.totalEnergy} kcal，蛋白质目标：${currentData.totalProtein} g
+- 今天吃了：${foodList}
+- 今天吃进去的能量：${totalK.toFixed(0)} kcal，蛋白质：${totalP.toFixed(1)} g
+- 还需要补充小百肽能：${(Math.max(0,currentData.totalEnergy-totalK)/PRODUCT.kcalPerGram).toFixed(1)}g
+
+请分析：
+1. 今天吃得够不够？
+2. 食物搭配是否均衡？
+3. 建议增加或减少哪些食物？
+4. 小百肽能怎么补？
+语言亲切、实用，不超过400字。`;
+
+  const result = await callAI(prompt);
+  el.classList.remove('loading');
+  el.innerHTML = formatMarkdown(result);
+}
+
+// 简易Markdown格式化
+function formatMarkdown(text) {
+  return text
+    .replace(/^### (.+)$/gm, '<h4 style="color:#E67E22;margin:8px 0 4px">$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3 style="color:#2C3E50;margin:10px 0 6px">$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^> (.+)$/gm, '<div style="border-left:3px solid #E67E22;padding-left:10px;margin:6px 0;color:#A04000">$1</div>')
+    .replace(/^(\d+)\. (.+)$/gm, '<div style="margin:4px 0">$1. $2</div>')
+    .replace(/\n/g, '<br>');
+}
+
+// ===== 初始化 =====
+document.getElementById('tubeMode').addEventListener('change', function() {
+  calcFeeding();
+});
+// 微信环境检测与提示
+function detectWeChat() {
+  const ua = navigator.userAgent.toLowerCase();
+  const isWeChat = /micromessenger/i.test(ua);
+  if (isWeChat) {
+    document.getElementById('wechat-tip').classList.add('show');
+  }
+}
+
+detectWeChat();
+calculate();
+initFoodRows();
+</script>
+
+<script>
+// 动态生成datalist
+var dl = document.createElement('datalist');
+dl.id = 'food-list';
+dl.innerHTML = FOOD_DB.map(function(f) { return '<option value="'+f[0]+'">'+f[1]+'kcal, '+f[2]+'g蛋白</option>'; }).join('');
+document.body.appendChild(dl);
+</script>
+
+</body>
+</html>
